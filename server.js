@@ -27,8 +27,32 @@ app.post('/api/chat', async (req, res) => {
 
   // Pour tester, renvoyer une réponse statique :
   // (Remplace cette partie par l'appel à l'API OpenAI une fois que tout fonctionne)
-  console.log("Requête reçue :", req.body);
-  return res.json({ response: `Réponse simulée pour "${userMessage}" avec le prompt:\n${prompt}` });
+  try {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: "gpt-4",
+      messages: [
+        { role: "system", content: "Vous êtes Ava, l'assistante virtuelle de VPNParis. Aidez les clients en leur fournissant des liens directs vers nos produits et des informations pertinentes." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.7
+    })
+  });
+
+  const data = await response.json();
+  if (!data.choices || data.choices.length === 0) {
+    throw new Error("Réponse vide de l'API OpenAI.");
+  }
+  res.json({ response: data.choices[0].message.content });
+} catch (error) {
+  console.error("Erreur API:", error);
+  res.status(500).json({ error: "Erreur lors de l'appel à l'API OpenAI." });
+}
 
   // --- Code original avec appel à OpenAI ---
   /*
