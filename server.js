@@ -31,7 +31,7 @@ app.post('/api/chat', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer YOUR_OPENAI_API_KEY' // Remplacez par votre clé API
+        'Authorization': 'Bearer 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' // Remplacez par votre clé API
       },
       body: JSON.stringify({
         model: "gpt-4",
